@@ -15,3 +15,5 @@ You’ll find recipes for:
 * Monitoring (Prometheus / Grafana)
 * GitOps (ArgoCD)
 * ...
+
+Start installing/deploying your first managed Kubernetes!
