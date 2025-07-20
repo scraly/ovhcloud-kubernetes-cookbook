@@ -12,5 +12,6 @@ You’ll find recipes for:
 * kyverno
 * falco
 * External Secret Operator (ESO)
+* Monitoring (Prometheus / Grafana)
 * GitOps (ArgoCD)
 * ...
