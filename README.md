@@ -6,7 +6,7 @@ Automate the deployment, scale, and operations of application containers across 
 
 You’ll find recipes for:
 * [MKS installation/deployment (in 1 and 3AZ)](./mks-installation/README.md)
-* Ingress
+* Ingress [(Nginx Ingress Controller)](./ingress/nginx-ingress-controller/README.md)
 * Gateway API
 * Certification management with cert-manager
 * Kustomize
@@ -16,6 +16,7 @@ You’ll find recipes for:
 * [Secret Management with External Secret Operator (ESO)](./external-secret-operator/README.md)
 * Monitoring (Prometheus / Grafana)
 * [Apps deployment](./deployment-apps/README.md)
+* Load Balancer
 * GitOps (ArgoCD)
 * ...
 

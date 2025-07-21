@@ -169,3 +169,7 @@ metadata:
   uid: 6312cd9b-5d09-4184-ad3f-2368027a0909
 type: kubernetes.io/dockerconfigjson
 ```
+
+### TODO: Creating a Kubernetes Secret from the OVHcloud Secret Manager
+
+Soon...
