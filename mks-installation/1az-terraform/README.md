@@ -1,4 +1,4 @@
-## Create a MKS Premium cluster on 3AZ with Terraform
+## Create a MKS Free cluster with Terraform
 
 ### General information
  - 🔗 [Using Terraform with OVHcloud](https://help.ovhcloud.com/csm/fr-terraform-at-ovhcloud?id=kb_article_view&sysparm_article=KB0054776)
@@ -29,25 +29,25 @@ export OVH_CLOUD_PROJECT_SERVICE="xxx"
 ```
   - use the [kube.tf](my-ovh_kube_cluster.tf) file to define the resources to create and to display the kubeconfig file at the end of Terraform execution
   - run the `terraform init` command
-  - run the `terraform plan` command
-  - run the `terraform apply` command (~ 6-7 mins)
+  - run the `terraform apply` command (~ 5-7 mins)
 
 ```bash
-ovh_cloud_project_kube_nodepool.node_pool_multi_zones_a: Still creating... [6m0s elapsed]
-ovh_cloud_project_kube_nodepool.node_pool_multi_zones_c: Still creating... [6m0s elapsed]
-ovh_cloud_project_kube_nodepool.node_pool_multi_zones_a: Creation complete after 6m7s [id=019739fc-fc5f-720c-b449-0eb1c585f887]
-ovh_cloud_project_kube_nodepool.node_pool_multi_zones_c: Creation complete after 6m7s [id=019739fc-fc72-760a-9fe6-e1264ea0395d]
-ovh_cloud_project_kube_nodepool.node_pool_multi_zones_b: Creation complete after 6m7s [id=019739fc-fc5b-7296-aa55-8814e2068b4e]
+...
+ovh_cloud_project_kube.my_cluster: Still creating... [2m50s elapsed]
+ovh_cloud_project_kube.my_cluster: Creation complete after 2m51s [id=1ebec32b-636c-43e5-9ffd-636d51e9a75f]
+...
+ovh_cloud_project_kube_nodepool.node_pool_1: Still creating... [2m20s elapsed]
+ovh_cloud_project_kube_nodepool.node_pool_1: Creation complete after 2m23s [id=c980ebf6-78be-4a51-a187-a858cd3060c5]
 ```
 
   - get the `kubeconfig` value:
 
-`terraform output -raw kubeconfig > mks_premium_3az.yml`
+`terraform output -raw kubeconfig > mks_free_gra11.yml`
 
   - save the path of kubeconfig in an environment variable (for later ^^)
 
 ```bash
-export KUBE_CLUSTER=$(pwd)/mks_premium_3az.yml
+export KUBE_CLUSTER=$(pwd)/mks_free_gra11.yml
 ```
 
   - test the connexion to the Kubernetes:
