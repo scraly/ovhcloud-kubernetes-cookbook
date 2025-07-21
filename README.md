@@ -6,13 +6,14 @@ Automate the deployment, scale, and operations of application containers across 
 
 You’ll find recipes for:
 * [MKS installation/deployment (in 1 and 3AZ)](./mks-installation/README.md)
-* Ingress / Gateway API
+* Ingress
+* Gateway API
 * Certification management with cert-manager
 * Kustomize
 * [Policy engine with Kyverno](./kyverno/README.md)
 * Security with Falco
 * [Admission Plugins](./admission-plugin/README.md)
-* Secret Management with External Secret Operator (ESO)
+* [Secret Management with External Secret Operator (ESO)](./external-secret-operator/README.md)
 * Monitoring (Prometheus / Grafana)
 * [Apps deployment](./deployment-apps/README.md)
 * GitOps (ArgoCD)

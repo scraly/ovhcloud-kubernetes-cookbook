@@ -38,6 +38,11 @@ ovh_cloud_project_kube.my_cluster: Creation complete after 2m51s [id=1ebec32b-63
 ...
 ovh_cloud_project_kube_nodepool.node_pool_1: Still creating... [2m20s elapsed]
 ovh_cloud_project_kube_nodepool.node_pool_1: Creation complete after 2m23s [id=c980ebf6-78be-4a51-a187-a858cd3060c5]
+Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+kubeconfig_file = <sensitive>
 ```
 
   - get the `kubeconfig` value:
