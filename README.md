@@ -7,7 +7,7 @@ Automate the deployment, scale, and operations of application containers across 
 You’ll find recipes for:
 * [MKS installation/deployment (in 1 and 3AZ)](./mks-installation/README.md)
 * [Certification management with cert-manager](./cert-manager/README.md)
-* Ingress [(Nginx Ingress Controller)](./ingress/nginx-ingress-controller/README.md)
+* [Ingress](./ingress/README.md) [(Nginx Ingress Controller)](./ingress/nginx-ingress-controller/README.md)
 * Gateway API
 * Kustomize
 * [Policy engine with Kyverno](./kyverno/README.md)
