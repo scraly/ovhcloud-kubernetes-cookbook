@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+  namespace: test-kyverno
+spec:
+  containers:
+  - name: hello-ovh
+    image: 79352h8v.c1.de1.container-registry.ovh.net/public/hello-ovh:1.0.0
+  imagePullSecrets:
+  - name: ovhregistrycred

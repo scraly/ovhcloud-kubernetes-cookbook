@@ -1,0 +1,23 @@
+apiVersion: policies.kyverno.io/v1alpha1
+kind: ValidatingPolicy
+metadata:
+  name: private-reg-only
+spec:
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods]
+  variables:
+    - name: images
+      expression: >-
+        object.spec.containers.map(e, image(e.image))
+        + object.spec.?initContainers.orValue([]).map(e, image(e.image))
+        + object.spec.?ephemeralContainers.orValue([]).map(e, image(e.image))
+  validations:
+    - expression: >-
+        object.metadata.namespace == "test-kyverno" &&
+        variables.images.map(i, i.registry()).all(r, r.contains("container-registry.ovh.net"))
+      message: >-
+        images must be stored in OVHcloud Managed Private Registries
