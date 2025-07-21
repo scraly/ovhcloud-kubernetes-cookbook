@@ -1,7 +1,7 @@
 # ovhcloud-kubernetes-cookbook
 
 Hands-on recipes for your OVHcloud Managed Kubernetes Service (MKS) cluster for a production usage.<br/>
-Use the power of CNCF Cloud Native ecosystem.
+Use the power of CNCF Cloud Native ecosystem.<br/>
 Automate the deployment, scale, and operations of application containers across clusters of hosts.
 
 You’ll find recipes for:
@@ -18,4 +18,4 @@ You’ll find recipes for:
 * GitOps (ArgoCD)
 * ...
 
-Start installing/deploying your first managed Kubernetes!
+Start installing/deploying your managed Kubernetes cluster and deploying awesome tools into it!
