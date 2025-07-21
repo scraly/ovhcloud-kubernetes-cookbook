@@ -90,6 +90,29 @@ echo $INGRESS_IP
 
 ### Deploy an ingress
 
+Deploy A simple echo app and its ingress on your cluster:
+
+```bash
+kubectl apply -f echo.yaml
+```
+
+Result:
+
+```bash
+$ kubectl apply -f echo.yaml
+
+namespace/echo created
+deployment.apps/echo-deployment created
+service/echo-service created
+ingress.networking.k8s.io/echo-ingress created
+```
+
+```bash
+$ kubectl get ingress -n echo
+NAME           CLASS   HOSTS   ADDRESS        PORTS   AGE
+echo-ingress   nginx   *       57.130.28.48   80      112s
+```
+
 ### TODO: Secure it through cert-manager
 
 ### TODO: Have access to real client IP in applications
@@ -98,7 +121,6 @@ By default, when deploying services through a LoadBalancer, the LB act as a prox
 
 The solution is to preserve the source IP.
  
-real-ip-values.yaml:
 ```yaml
 controller:
   service:
@@ -124,91 +146,22 @@ Patch your Nginx Ingress Controller:
 helm upgrade ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx -f real-ip-values.yaml
 ````
 
-We can now deploy a simple echo service to verify that everything is working. The service will use the mendhak/http-https-echo image, a very useful HTTPS echo Docker container for web debugging.
+We can now deploy a simple echo service to verify that everything is working. The service will use the `mendhak/http-https-echo` image, a very useful HTTPS echo Docker container for web debugging.
 
-First, copy the next manifest to a echo.yaml file:
+Deploy it on your cluster:
 
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: echo
-
----
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: echo-deployment
-  namespace: echo
-  labels:
-    app: echo
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: echo
-  template:
-    metadata:
-      labels:
-        app: echo
-    spec:
-      containers:
-      - name: echo
-        image: mendhak/http-https-echo
-        ports:
-        - containerPort: 80
-        - containerPort: 443
-
----
-
-apiVersion: v1
-kind: Service
-metadata:  
-  name: echo-service
-  namespace: echo
-spec:
-  selector:
-    app: echo
-  ports:  
-  - name: http
-    port: 80
-    targetPort: 80
-    protocol: TCP
-
----
-
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: echo-ingress
-  namespace: echo
-  annotations:
-    kubernetes.io/ingress.class: nginx
-spec:
-  rules:
-  - http:
-      paths:
-        - path: "/"
-          pathType: Prefix
-          backend:
-            service:
-              name: echo-service
-              port:
-                number: 80
-
-And deploy it on your cluster:
-
+```bash
 kubectl apply -f echo.yaml
-
-$ kubectl apply -f echo.yaml
-namespace/echo created
-deployment.apps/echo-deployment created
-service/echo-service created
-ingress.extensions/echo-ingress created
+```
 
 Now you can test it using the LoadBalancer URL:
 
-curl  xxx.xxx.xxx.xxx
+```bash
+export INGRESS_IP=$(kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[].ip}')
+echo $INGRESS_IP
+
+curl $INGRESS_IP
+```
 
 And you should get the HTTP parameters of your request, including the right source IP in the x-real-ip header:
 

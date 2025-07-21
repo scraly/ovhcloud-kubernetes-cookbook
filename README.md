@@ -17,6 +17,7 @@ You’ll find recipes for:
 * Monitoring (Prometheus / Grafana)
 * [Apps deployment](./deployment-apps/README.md)
 * Load Balancer
+* CNI (Cilium, Calico)
 * GitOps (ArgoCD)
 * ...
 
