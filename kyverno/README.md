@@ -2,6 +2,8 @@
 
 In this Kyverno cookbook you can deploy & test useful Kyverno policies in MKS environment
 
+Resource: https://help.ovhcloud.com/csm/fr-public-cloud-kubernetes-install-kyverno?id=kb_article_view&sysparm_article=KB0055165
+
 ## Installation
 
 ```bash
@@ -70,8 +72,7 @@ kyverno-reports-controller-6989f55fff-2wzqt     1/1     Running   0          62s
 
 ## Deploy policies
 
-
-### MPR policy
+### MPR only policy
 
 You can ask Kyverno to deny the creation and the update of Pods if they don't use MPR (docker registry forbidden for example).
 
