@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-ovh-deployment
+spec:
+  replicas: 6
+  template:
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: "topology.kubernetes.io/zone"
+                operator: In
+                values:
+                - eu-west-par-a
+                - eu-west-par-b
+                - eu-west-par-c
+      containers:
+      - name: hello-ovh
+        image: hello-ovh:1.0.0
+      imagePullSecrets:
+      - name: ovhregistrycred

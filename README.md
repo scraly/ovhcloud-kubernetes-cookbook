@@ -5,14 +5,16 @@ Use the power of CNCF Cloud Native ecosystem.
 Automate the deployment, scale, and operations of application containers across clusters of hosts.
 
 You’ll find recipes for:
-* MKS installation/deployment (in 1 and 3AZ)
+* [MKS installation/deployment (in 1 and 3AZ)](./mks-installation/README.md)
 * Ingress / Gateway API
 * Certification management with cert-manager
-* kustomize
-* Policy engine with Kyverno
+* Kustomize
+* [Policy engine with Kyverno](./kyverno/README.md)
 * Security with Falco
+* [Admission Plugins](./admission-plugin/README.md)
 * Secret Management with External Secret Operator (ESO)
 * Monitoring (Prometheus / Grafana)
+* [Apps deployment](./deployment-apps/README.md)
 * GitOps (ArgoCD)
 * ...
 
