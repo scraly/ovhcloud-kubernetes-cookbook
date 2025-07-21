@@ -161,9 +161,159 @@ $ curl $INGRESS_IP
 
 /!\ `x-real-ip` field is not the real IP of the client.
 
-### TODO: Secure it through cert-manager
+### Secure it through cert-manager
 
-### TODO: Have access to real client IP in applications
+Follow [cert-manager README file](../../cert-manager/README.md) to install cert-manager on your Kubernetes cluster.
+
+Deploy an hello-world application:
+
+```bash
+kubectl apply -f hello-world.yaml
+```
+
+Result:
+```bash
+$ kubectl apply -f hello-world.yaml
+
+namespace/hello-world created
+deployment.apps/hello-world-deployment created
+service/hello-world created
+
+$ kubectl get pod,svc -l app=hello-world -n hello-world
+NAME                                          READY   STATUS    RESTARTS   AGE
+pod/hello-world-deployment-58c6f884bf-twrbh   1/1     Running   0          29s
+
+NAME                  TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/hello-world   ClusterIP   10.3.17.82   <none>        80/TCP    29s
+```
+
+
+/!\ Replace `YOUR_DN` fields in the `hello-world-ingress-tls.yaml` file with your real Domain Name!
+
+Apply the Ingress file with SSL/TLS configuration:
+
+```bash
+kubectl apply -f hello-world-ingress-tls.yaml
+```
+
+At this step, a Certificate resource has been created:
+
+```bash
+$ kubectl get certificate -n hello-world
+NAME              READY   SECRET            AGE
+hello-world-tls   False   hello-world-tls   17s
+```
+
+You can display the events of the certificate to check if the certificate has been correctly created and if it creates the necessary CertificateRequest:
+
+```bash
+$ kubectl describe certificate -n hello-world
+Name:         hello-world-tls
+Namespace:    hello-world
+Labels:       <none>
+Annotations:  <none>
+API Version:  cert-manager.io/v1
+Kind:         Certificate
+Metadata:
+  Creation Timestamp:  2025-07-21T14:14:02Z
+  Generation:          1
+  Owner References:
+    API Version:           networking.k8s.io/v1
+    Block Owner Deletion:  true
+    Controller:            true
+    Kind:                  Ingress
+    Name:                  ingress
+    UID:                   13fca52c-51f6-46d0-bd36-113049ed8f4e
+  Resource Version:        1714045
+  UID:                     91fe60cd-b3e4-49f7-954d-7ace3204b8d0
+Spec:
+  Dns Names:
+    hello-world.demonstrator.ovh
+  Issuer Ref:
+    Group:      cert-manager.io
+    Kind:       ClusterIssuer
+    Name:       letsencrypt-prod
+  Secret Name:  hello-world-tls
+  Usages:
+    digital signature
+    key encipherment
+Status:
+  Conditions:
+    Last Transition Time:        2025-07-21T14:14:02Z
+    Message:                     Issuing certificate as Secret does not exist
+    Observed Generation:         1
+    Reason:                      DoesNotExist
+    Status:                      False
+    Type:                        Ready
+    Last Transition Time:        2025-07-21T14:14:02Z
+    Message:                     Issuing certificate as Secret does not exist
+    Observed Generation:         1
+    Reason:                      DoesNotExist
+    Status:                      True
+    Type:                        Issuing
+  Next Private Key Secret Name:  hello-world-tls-nksst
+Events:
+  Type    Reason     Age   From                                       Message
+  ----    ------     ----  ----                                       -------
+  Normal  Issuing    89s   cert-manager-certificates-trigger          Issuing certificate as Secret does not exist
+  Normal  Generated  89s   cert-manager-certificates-key-manager      Stored new private key in temporary Secret resource "hello-world-tls-nksst"
+  Normal  Requested  89s   cert-manager-certificates-request-manager  Created new CertificateRequest resource "hello-world-tls-1"
+```
+
+Check CertificateRequest, Order and Challenge:
+
+```bash
+kubectl describe certificaterequest -n hello-world
+kubectl describe order -n hello-world
+kubectl describe challenge -n hello-world
+```
+
+You now need to map the Domain Name (DN) and the Load Balancer. In order to do this, create an A-record for [YOUR_DN] (your domain name ;-) mapped to the value of $INGRESS_IP.
+
+Example:
+![DNS A Record](dns-record.png)
+
+
+Wait until the challenge is resolved:
+
+```bash
+dig +short [YOUR_DN]
+```
+
+Wait and check again the CertificateRequest:
+
+```bash
+kubectl describe certificaterequest -n hello-world
+```
+
+Result:
+```bash
+$ kubectl describe certificate -n hello-world
+Name:         hello-world-tls
+Namespace:    hello-world
+Labels:       <none>
+Annotations:  <none>
+API Version:  cert-manager.io/v1
+Kind:         Certificate
+...
+Events:
+  Type    Reason     Age   From                                       Message
+  ----    ------     ----  ----                                       -------
+  Normal  Issuing    9m5s  cert-manager-certificates-trigger          Issuing certificate as Secret does not exist
+  Normal  Generated  9m5s  cert-manager-certificates-key-manager      Stored new private key in temporary Secret resource "hello-world-tls-nksst"
+  Normal  Requested  9m5s  cert-manager-certificates-request-manager  Created new CertificateRequest resource "hello-world-tls-1"
+  Normal  Issuing    37s   cert-manager-certificates-issuing          The certificate has been successfully issued
+```
+
+Finally, check is cert-manager have created the Kubernetes Secret with the certificate:
+
+```bash
+kubectl get secret -n hello-world
+```
+
+If you found an `hello-world-tls` secret of type `kubernetes.io/tls`, you've done! 🎉
+
+### Have access to real client IP in applications
 
 By default, when deploying services through a LoadBalancer, the LB act as a proxy, so the remote address of an application will be the IP of the LB, not the client/source IP of the request.
 

@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  name: ingress
+  namespace: hello-world
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - [YOUR_DN]
+      secretName: hello-world-tls # < cert-manager will store the created certificate in this secret.
+  rules:
+  - host: [YOUR_DN]
+    http:
+      paths:
+      - backend:
+          service:
+            name: hello-world
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
