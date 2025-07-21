@@ -13,4 +13,4 @@ controller:
     # kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath="{.metadata.annotations.lb\.k8s\.ovh\.net/egress-ips}"
     #proxy-real-ip-cidr: "aaa.aaa.aaa.aaa/32,bbb.bbb.bbb.bbb/32,ccc.ccc.ccc.ccc/32,ddd.ddd.ddd.ddd/32"
     # For private network
-    proxy-real-ip-cidr: "xx.yy.zz.aa/nn" #your subnet range
+    #proxy-real-ip-cidr: "xx.yy.zz.aa/nn" #your subnet range, example: "192.168.142.0/24"

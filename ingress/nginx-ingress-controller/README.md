@@ -107,20 +107,68 @@ service/echo-service created
 ingress.networking.k8s.io/echo-ingress created
 ```
 
+Wait until the ADDRESS field of your Ingress contains the LB IP:
 ```bash
-$ kubectl get ingress -n echo
-NAME           CLASS   HOSTS   ADDRESS        PORTS   AGE
-echo-ingress   nginx   *       57.130.28.48   80      112s
+$ kubectl get ingress -n echo -w
+NAME           CLASS   HOSTS   ADDRESS   PORTS   AGE
+echo-ingress   nginx   *                 80      15s
+echo-ingress   nginx   *       57.130.31.234   80      60s
 ```
+
+Test:
+
+```bash
+curl $INGRESS_IP
+```
+
+Result:
+
+```bash
+$ curl $INGRESS_IP
+{
+  "path": "/",
+  "headers": {
+    "host": "57.130.31.234",
+    "x-request-id": "bf3035c7762338a68874b7305034f617",
+    "x-real-ip": "10.240.2.84",
+    "x-forwarded-for": "10.240.2.84",
+    "x-forwarded-host": "57.130.31.234",
+    "x-forwarded-port": "80",
+    "x-forwarded-proto": "http",
+    "x-forwarded-scheme": "http",
+    "x-scheme": "http",
+    "user-agent": "curl/8.7.1",
+    "accept": "*/*"
+  },
+  "method": "GET",
+  "body": "",
+  "fresh": false,
+  "hostname": "57.130.31.234",
+  "ip": "10.240.2.84",
+  "ips": [
+    "10.240.2.84"
+  ],
+  "protocol": "http",
+  "query": {},
+  "subdomains": [],
+  "xhr": false,
+  "os": {
+    "hostname": "echo-deployment-577f888948-xprp2"
+  },
+  "connection": {}
+}
+```
+
+/!\ `x-real-ip` field is not the real IP of the client.
 
 ### TODO: Secure it through cert-manager
 
 ### TODO: Have access to real client IP in applications
 
-By default, when deploying services through a LoadBalancer, the LB act as a proxy, so the remote address of an application will be the IP of the LB, not the source UP of the request.
+By default, when deploying services through a LoadBalancer, the LB act as a proxy, so the remote address of an application will be the IP of the LB, not the client/source IP of the request.
 
 The solution is to preserve the source IP.
- 
+
 ```yaml
 controller:
   service:
@@ -140,15 +188,19 @@ controller:
     proxy-real-ip-cidr: "xx.yy.zz.aa/nn" #your subnet range
 ```
 
+/!\ Replace the subnet of the Private Network of your MKS cluster in the `real-ip-values.yaml` file!
+
 Patch your Nginx Ingress Controller:
 
 ```bash
 helm upgrade ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx -f real-ip-values.yaml
-````
+```
+
+Wait several seconds.
 
 We can now deploy a simple echo service to verify that everything is working. The service will use the `mendhak/http-https-echo` image, a very useful HTTPS echo Docker container for web debugging.
 
-Deploy it on your cluster:
+Deploy `echo` app and ingress on your cluster (if you don't already deploy it):
 
 ```bash
 kubectl apply -f echo.yaml
@@ -163,40 +215,39 @@ echo $INGRESS_IP
 curl $INGRESS_IP
 ```
 
-And you should get the HTTP parameters of your request, including the right source IP in the x-real-ip header:
+And you should get the HTTP parameters of your request, including the right source IP in the `x-real-ip` header:
 
+```bash
+$ curl $INGRESS_IP
 {
   "path": "/",
   "headers": {
-    "host": "xxx.xxx.xxx.xxx",
-    "x-request-id": "2126b343bc837ecbd07eca904c33daa3",
-    "x-real-ip": "XXX.XXX.XXX.XXX",
-    "x-forwarded-for": "XXX.XXX.XXX.XXX",
-    "x-forwarded-host": "xxx.xxx.xxx.xxx",
+    "host": "57.130.31.234",
+    "x-request-id": "891c73bbb85248fa74c3de04d0267cec",
+    "x-real-ip": "109.190.254.33",
+    "x-forwarded-for": "109.190.254.33",
+    "x-forwarded-host": "57.130.31.234",
     "x-forwarded-port": "80",
     "x-forwarded-proto": "http",
-    "x-original-uri": "/",
+    "x-forwarded-scheme": "http",
     "x-scheme": "http",
-    "user-agent": "curl/7.58.0",
+    "user-agent": "curl/8.7.1",
     "accept": "*/*"
   },
   "method": "GET",
   "body": "",
   "fresh": false,
-  "hostname": "xxx.xxx.xxx.xxx",
-  "ip": "::ffff:10.2.1.2",
-  "ips": [],
+  "hostname": "57.130.31.234",
+  "ip": "109.190.254.33",
+  "ips": [
+    "109.190.254.33"
+  ],
   "protocol": "http",
   "query": {},
-  "subdomains": [
-    "k8s",
-    "gra",
-    "c1",
-    "lb",
-    "6d6rslnrn8"
-  ],
+  "subdomains": [],
   "xhr": false,
   "os": {
-    "hostname": "echo-deployment-6b6fdc96cf-hwqw6"
-  }
-}
+    "hostname": "echo-deployment-577f888948-xprp2"
+  },
+  "connection": {}
+```
