@@ -18,8 +18,10 @@ You’ll find recipes for:
 * [Apps deployment](./deployment-apps/README.md)
 * [Cluster Autoscaler](./cluster-autoscaler/README.md)
 * Load Balancer
+* [Customizing kube-proxy](./customizing-kube-proxy/README.md)
 * CNI (Cilium, Calico)
 * GitOps (ArgoCD)
+* NodeLocal DNSCache
 * ...
 
 Start installing/deploying your managed Kubernetes cluster and deploying awesome tools into it!
