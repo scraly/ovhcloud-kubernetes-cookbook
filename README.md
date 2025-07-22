@@ -22,6 +22,7 @@ You’ll find recipes for:
 * CNI (Cilium, Calico)
 * GitOps (ArgoCD)
 * NodeLocal DNSCache
+* [Tips/FAQ](./tips/README.md)
 * ... and much more!
 
 🧑‍💻 Start installing/deploying your managed Kubernetes cluster and supercharge it with awesome tools!
