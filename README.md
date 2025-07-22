@@ -16,6 +16,7 @@ You’ll find recipes for:
 * [Secret Management with External Secret Operator (ESO)](./external-secret-operator/README.md)
 * Monitoring (Prometheus / Grafana)
 * [Apps deployment](./deployment-apps/README.md)
+* [Cluster Autoscaler](./cluster-autoscaler/README.md)
 * Load Balancer
 * CNI (Cilium, Calico)
 * GitOps (ArgoCD)
