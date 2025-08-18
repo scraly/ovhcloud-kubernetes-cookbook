@@ -159,7 +159,7 @@ $ curl $INGRESS_IP
 }
 ```
 
-/!\ `x-real-ip` field is not the real IP of the client.
+⚠️ `x-real-ip` field is not the real IP of the client.
 
 ### Secure it through cert-manager
 
@@ -188,7 +188,7 @@ service/hello-world   ClusterIP   10.3.17.82   <none>        80/TCP    29s
 ```
 
 
-/!\ Replace `YOUR_DN` fields in the `hello-world-ingress-tls.yaml` file with your real Domain Name!
+⚠️ Replace `YOUR_DN` fields in the `hello-world-ingress-tls.yaml` file with your real Domain Name!
 
 Apply the Ingress file with SSL/TLS configuration:
 
@@ -338,7 +338,7 @@ controller:
     proxy-real-ip-cidr: "xx.yy.zz.aa/nn" #your subnet range
 ```
 
-/!\ Replace the subnet of the Private Network of your MKS cluster in the `real-ip-values.yaml` file!
+⚠️ Replace the subnet of the Private Network of your MKS cluster in the `real-ip-values.yaml` file!
 
 Patch your Nginx Ingress Controller:
 

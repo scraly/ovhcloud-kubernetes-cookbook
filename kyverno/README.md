@@ -265,4 +265,4 @@ spec:
                       - kube-system
 ```
 
-/!\ When Rancher restarts, it recreates the webhookconfiguration, so sometimes there is some latency from Kyverno to re-apply it
+⚠️ When Rancher restarts, it recreates the webhookconfiguration, so sometimes there is some latency from Kyverno to re-apply it

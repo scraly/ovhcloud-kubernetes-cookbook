@@ -18,7 +18,7 @@ helm install \
   --values values.yaml
 ```
 
-/!\ `values.yaml` file is necessary to "fix" blocking [ingress-nginx 1.18+ changes](https://cert-manager.io/docs/releases/release-notes/release-notes-1.18/#acme-http01-challenge-paths-now-use-pathtype-exact-in-ingress-routes).
+⚠️ `values.yaml` file is necessary to "fix" blocking [ingress-nginx 1.18+ changes](https://cert-manager.io/docs/releases/release-notes/release-notes-1.18/#acme-http01-challenge-paths-now-use-pathtype-exact-in-ingress-routes).
 
 Result:
 
