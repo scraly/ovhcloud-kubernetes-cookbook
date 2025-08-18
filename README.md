@@ -19,6 +19,7 @@ You’ll find recipes for:
 * [Cluster Autoscaler](./cluster-autoscaler/README.md)
 * Load Balancer
 * [Customizing kube-proxy](./customizing-kube-proxy/README.md)
+* [StorageClass](./storage-class/README.md)
 * CNI (Cilium, Calico)
 * GitOps (ArgoCD)
 * NodeLocal DNSCache

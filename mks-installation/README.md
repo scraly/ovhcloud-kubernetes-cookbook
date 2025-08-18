@@ -13,3 +13,9 @@ Follow [3AZ README file](./3az-terraform/README.md).
 ## With CLI
 
 Soon!
+
+## Migration
+
+Free -> Standard : there is currently no region supporting both plans but it will be possible without downtime.
+
+Standard -> Free : not planned. Quite complex as Standard have dedicated ressources (etcd).
