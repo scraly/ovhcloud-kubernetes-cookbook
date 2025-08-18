@@ -72,7 +72,7 @@ kyverno-reports-controller-6989f55fff-2wzqt     1/1     Running   0          62s
 
 ## Deploy policies
 
-### MPR only policy
+### Managed Private Registry (MPR) only policy
 
 You can ask Kyverno to deny the creation and the update of Pods if they don't use MPR (docker registry forbidden for example).
 
@@ -169,3 +169,67 @@ Error from server: error when creating "my-wrong-pod.yaml": admission webhook "v
 ```
 
 You can't create a Pod that will pull an image from Docker Hub ;-).
+
+### Rancher webhooks should not manages the secrets in the kube-system namespace
+
+If you have Rancher installed in your cluster, sometimes you can have "USER_WEBHOOK_PREVENTING_OPERATIONS_ERROR" error in your MKS cluster.
+
+```yaml
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: mutate-rancher-secrets-webhookconfiguration
+  annotations:
+    policies.kyverno.io/title: Filter Rancher secrets WebhookConfiguration
+    policies.kyverno.io/description: >-
+      Filter Rancher WebhookConfiguration to match secrets not in the `kube-system` namespace
+spec:
+  mutateExistingOnPolicyUpdate: true
+  rules:
+    - name: mutate-rancher-secrets-mutatingwebhookconfiguration
+      match:
+        any:
+        - resources:
+            kinds:
+            - MutatingWebhookConfiguration
+            names:
+            - rancher.cattle.io
+      mutate:
+        targets:
+        - apiVersion: admissionregistration.k8s.io/v1
+          kind: MutatingWebhookConfiguration
+          name: rancher.cattle.io
+        patchStrategicMerge:
+          webhooks:
+            - name: rancher.cattle.io.secrets
+              namespaceSelector:
+                matchExpressions:
+                  - key: kubernetes.io/metadata.name
+                    operator: NotIn
+                    values:
+                      - kube-system
+    - name: mutate-rancher-secrets-validatingwebhookconfigurations
+      match:
+        any:
+        - resources:
+            kinds:
+            - ValidatingWebhookConfiguration
+            names:
+            - rancher.cattle.io
+      mutate:
+        targets:
+        - apiVersion: admissionregistration.k8s.io/v1
+          kind: ValidatingWebhookConfiguration
+          name: rancher.cattle.io
+        patchStrategicMerge:
+          webhooks:
+            - name: rancher.cattle.io.secrets
+              namespaceSelector:
+                matchExpressions:
+                  - key: kubernetes.io/metadata.name
+                    operator: NotIn
+                    values:
+                      - kube-system
+```
+
+/!\ When Rancher restarts, it recreates the webhookconfiguration, so sometimes there is some latency from Kyverno to re-apply it
