@@ -54,6 +54,8 @@ external-secrets-webhook-574788fc77-2t4jd           1/1     Running   0         
 
 ### Synchronize a secret accross several namespaces (kubernetes.io/dockerconfigjson)
 
+⚠️ Note that you can do the same things with [Kyverno](../kyverno/README.md) if you prefer.
+
 This use case is useful when you deployed a secret in one namespace that allows Pods to pull image coming from your OVHcloud Private Registry, and you want to deploy, automatically, this secret also in several other namespace.
 
 For this need we will you the [External Secret Kubernetes provider](https://external-secrets.io/latest/provider/kubernetes/).
