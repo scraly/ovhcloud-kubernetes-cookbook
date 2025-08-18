@@ -18,14 +18,15 @@ Result:
 ```bash
 $ helm install kyverno kyverno/kyverno -n kyverno --create-namespace
 
+Release "kyverno" has been upgraded. Happy Helming!
 NAME: kyverno
-LAST DEPLOYED: Mon Jul 21 09:59:45 2025
+LAST DEPLOYED: Mon Aug 18 14:56:01 2025
 NAMESPACE: kyverno
 STATUS: deployed
-REVISION: 1
+REVISION: 3
 NOTES:
-Chart version: 3.4.4
-Kyverno version: v1.14.4
+Chart version: 3.5.1
+Kyverno version: v1.15.1
 
 Thank you for installing kyverno! Your release is named kyverno.
 
@@ -38,6 +39,8 @@ The following components have been installed in your cluster:
 
 
 ⚠️  WARNING: Setting the admission controller replica count below 2 means Kyverno is not running in high availability mode.
+⚠️  WARNING: Generating ValidatingAdmissionPolicy requires a Kubernetes 1.27+ cluster with `ValidatingAdmissionPolicy` feature gate and `admissionregistration.k8s.io` API group enabled.
+⚠️  WARNING: Generating reports from ValidatingAdmissionPolicies requires a Kubernetes 1.27+ cluster with `ValidatingAdmissionPolicy` feature gate and `admissionregistration.k8s.io` API group enabled.
 
 
 ⚠️  WARNING: PolicyExceptions are disabled by default. To enable them, set '--enablePolicyException' to true.
@@ -53,9 +56,12 @@ cleanuppolicies.kyverno.io                              2025-07-21T07:59:52Z
 clustercleanuppolicies.kyverno.io                       2025-07-21T07:59:52Z
 clusterephemeralreports.reports.kyverno.io              2025-07-21T07:59:52Z
 clusterpolicies.kyverno.io                              2025-07-21T07:59:53Z
+deletingpolicies.policies.kyverno.io                    2025-08-18T12:56:10Z
 ephemeralreports.reports.kyverno.io                     2025-07-21T07:59:52Z
+generatingpolicies.policies.kyverno.io                  2025-08-18T12:56:10Z
 globalcontextentries.kyverno.io                         2025-07-21T07:59:52Z
 imagevalidatingpolicies.policies.kyverno.io             2025-07-21T07:59:52Z
+mutatingpolicies.policies.kyverno.io                    2025-08-18T12:56:10Z
 policies.kyverno.io                                     2025-07-21T07:59:53Z
 policyexceptions.kyverno.io                             2025-07-21T07:59:52Z
 policyexceptions.policies.kyverno.io                    2025-07-21T07:59:52Z
@@ -74,9 +80,9 @@ kyverno-reports-controller-6989f55fff-2wzqt     1/1     Running   0          62s
 
 ### Managed Private Registry (MPR) only policy
 
-You can ask Kyverno to deny the creation and the update of Pods if they don't use MPR (docker registry forbidden for example).
+You can ask Kyverno to deny the creation and the update of Pods if they don't use MPR (if DockerHub is forbidden for example).
 
-Here the policy that we will deploy:
+Here the policy that you will deploy:
 
 ```yaml
 apiVersion: policies.kyverno.io/v1alpha1
@@ -169,6 +175,33 @@ Error from server: error when creating "my-wrong-pod.yaml": admission webhook "v
 ```
 
 You can't create a Pod that will pull an image from Docker Hub ;-).
+
+### Clone the imagePullSecret from a source namespace to any newly create Namespace
+
+Prerequisite: Kyverno 1.15.
+
+```yaml
+apiVersion: policies.kyverno.io/v1alpha1
+kind: GeneratingPolicy
+metadata:
+  name: clone-image-pull-secret
+spec:
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   [""]
+      apiVersions: ["v1"]
+      operations:  ["CREATE"]
+      resources:   ["namespaces"]
+  variables:
+    - name: targetNs
+      expression: "object.metadata.name"
+    - name: sourceSecret
+      expression: resource.Get("v1", "secrets", "test-kyverno", "ovhregistrycred") #test-kyverno = source namespace
+  generate:
+    - expression: generator.Apply(variables.targetNs, [variables.sourceSecret])
+```
+
+In this policy, the creation of a new Namespace (the trigger) causes Kyverno to fetch the `ovhregistrycred` secret from the `test-kyverno` namespace (the source) and create a copy of it in the new namespace (the downstream resource).
 
 ### Rancher webhooks should not manages the secrets in the kube-system namespace
 
