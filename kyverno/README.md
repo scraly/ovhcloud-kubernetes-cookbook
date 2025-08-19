@@ -271,6 +271,8 @@ spec:
 
 Mutate policy that replace `docker.io.bitnami/` to `docker.io/bitnamilegacy/`.
 
+Related issue: https://github.com/bitnami/charts/issues/35164
+
 Prerequisite: Kyverno 1.15.
 
 ```yaml
