@@ -284,6 +284,8 @@ spec:
   evaluation:
     admission:
       enabled: true # mutating resources as they are being created or updated
+    mutateExisting:
+      enabled: true # mutating resources that already exist without requiring them to be recreated or updated
   matchConstraints:
     resourceRules:
       - apiGroups: [""]
@@ -298,19 +300,19 @@ spec:
             spec: Object.spec{
               containers: object.spec.containers.map(c,
                 c.image.startsWith("docker.io/bitnami/") && !c.image.startsWith("docker.io/bitnami/sealed-secrets") && !c.image.startsWith("docker.io/bitnami/minideb") ?
-                  Object{image: c.image.replace("docker.io/bitnami/", "docker.io/bitnamilegacy/")} :
+                  Object.spec.containers{image: c.image.replace("docker.io/bitnami/", "docker.io/bitnamilegacy/")} :
                   c
               ),
               initContainers: has(object.spec.initContainers) ?
                 object.spec.initContainers.map(c,
                   c.image.startsWith("docker.io/bitnami/") && !c.image.startsWith("docker.io/bitnami/sealed-secrets") && !c.image.startsWith("docker.io/bitnami/minideb") ?
-                    Object{image: c.image.replace("docker.io/bitnami/", "docker.io/bitnamilegacy/")} :
+                    Object.spec.initContainers{image: c.image.replace("docker.io/bitnami/", "docker.io/bitnamilegacy/")} :
                     c
                 ) : [],
               ephemeralContainers: has(object.spec.ephemeralContainers) ?
                 object.spec.ephemeralContainers.map(c,
                   c.image.startsWith("docker.io/bitnami/") && !c.image.startsWith("docker.io/bitnami/sealed-secrets") && !c.image.startsWith("docker.io/bitnami/minideb") ?
-                    Object{image: c.image.replace("docker.io/bitnami/", "docker.io/bitnamilegacy/")} :
+                    Object.spec.ephemeralContainers{image: c.image.replace("docker.io/bitnami/", "docker.io/bitnamilegacy/")} :
                     c
                 ) : []
             }
