@@ -266,3 +266,53 @@ spec:
 ```
 
 ⚠️ When Rancher restarts, it recreates the webhookconfiguration, so sometimes there is some latency from Kyverno to re-apply it
+
+### Bitnami
+
+Mutate policy that replace `docker.io.bitnami/` to `docker.io/bitnamilegacy/`.
+
+Prerequisite: Kyverno 1.15.
+
+```yaml
+apiVersion: policies.kyverno.io/v1alpha1
+kind: MutatingPolicy
+metadata:
+  name: replace-bitnami-repo
+spec:
+  evaluation:
+    admission:
+      enabled: true # mutating resources as they are being created or updated
+    mutateExisting:
+      enabled: true # mutate resources that already exist without requiring them to be recreated or updated
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+  mutations:
+    - patchType: ApplyConfiguration
+      applyConfiguration:
+        expression: >
+          Object{
+            spec: Object.spec{
+              containers: object.spec.containers.map(c,
+                c.image.startsWith("docker.io/bitnami/") ?
+                  Object{image: c.image.replace("docker.io/bitnami/", "docker.io/bitnamilegacy/")} :
+                  c
+              ),
+              initContainers: has(object.spec.initContainers) ?
+                object.spec.initContainers.map(c,
+                  c.image.startsWith("docker.io/bitnami/") ?
+                    Object{image: c.image.replace("docker.io/bitnami/", "docker.io/bitnamilegacy/")} :
+                    c
+                ) : [],
+              ephemeralContainers: has(object.spec.ephemeralContainers) ?
+                object.spec.ephemeralContainers.map(c,
+                  c.image.startsWith("docker.io/bitnami/") ?
+                    Object{image: c.image.replace("docker.io/bitnami/", "docker.io/bitnamilegacy/")} :
+                    c
+                ) : []
+            }
+          }
+```
