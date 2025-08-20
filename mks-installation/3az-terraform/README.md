@@ -27,7 +27,7 @@ export OVH_APPLICATION_SECRET="xxx"
 export OVH_CONSUMER_KEY="xxx"
 export OVH_CLOUD_PROJECT_SERVICE="xxx"
 ```
-  - use the [kube.tf](my-ovh_kube_cluster.tf) file to define the resources to create and to display the kubeconfig file at the end of Terraform execution
+  - use the [kube.tf](kube.tf) file to define the resources to create and to display the kubeconfig file at the end of Terraform execution
   - run the `terraform init` command
   - run the `terraform plan` command
   - run the `terraform apply` command (~ 6-7 mins)
