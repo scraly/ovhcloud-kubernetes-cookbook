@@ -7,6 +7,7 @@ Automate the deployment, scale, and operations of your application containers ac
 You’ll find recipes for:
 * [MKS installation/deployment (in 1 and 3AZ)](./mks-installation/README.md)
 * [Certification management with cert-manager](./cert-manager/README.md)
+* [Load Balancer](./load-balancer/README.md)
 * [Ingress](./ingress/README.md) [(Nginx Ingress Controller)](./ingress/nginx-ingress-controller/README.md)
 * Gateway API
 * Kustomize
@@ -17,7 +18,6 @@ You’ll find recipes for:
 * Monitoring (Prometheus / Grafana)
 * [Apps deployment](./deployment-apps/README.md)
 * [Cluster Autoscaler](./cluster-autoscaler/README.md)
-* Load Balancer
 * [Customizing kube-proxy](./customizing-kube-proxy/README.md)
 * [StorageClass](./storage-class/README.md)
 * CNI (Cilium, Calico)

@@ -185,6 +185,15 @@ apiVersion: policies.kyverno.io/v1alpha1
 kind: GeneratingPolicy
 metadata:
   name: clone-image-pull-secret
+  annotations:
+    policies.kyverno.io/minversion: 1.15.0
+    policies.kyverno.io/description: >-
+      Secrets like registry credentials often need to exist in multiple
+      Namespaces so Pods there have access. Manually duplicating those Secrets
+      is time consuming and error prone. This policy will copy a
+      Secret called `ovhregistrycred` which exists in the `test-kyverno` Namespace to
+      new Namespaces when they are created. It will also push updates to
+      the copied Secrets should the source Secret be changed.
 spec:
   matchConstraints:
     resourceRules:
@@ -202,6 +211,12 @@ spec:
 ```
 
 In this policy, the creation of a new Namespace (the trigger) causes Kyverno to fetch the `ovhregistrycred` secret from the `test-kyverno` namespace (the source) and create a copy of it in the new namespace (the downstream resource).
+
+### Add automatically the imagePullSecret to Pods using MPR
+
+TODO: MutatingPolicy
+
+Ajouter automatiquement l’imagePullSecret aux Pods/Deployments afin qu’ils puissent accéder au registry OVHcloud.
 
 ### Rancher webhooks should not manages the secrets in the kube-system namespace
 
@@ -269,9 +284,13 @@ spec:
 
 ### Bitnami
 
-Mutate policy that replace `docker.io.bitnami/` to `docker.io/bitnamilegacy/`.
+Starting August 28, 2025 (that's just days away!), Bitnami is ending free access to production-grade container images for apps like Postgres, Redis, Kafka, RabbitMQ, NGINX, and more from their 280+ catalog.
+
+Impacts: Silent breakages in containers images, Helm charts, CI/CD pipelines, compliance and compatibility issues, and supply chain vulnerabilities.
 
 Related issue: https://github.com/bitnami/charts/issues/35164
+
+This Mutate policy replace `docker.io.bitnami/` to `docker.io/bitnamilegacy/` in your container's images.
 
 Prerequisite: Kyverno 1.15.
 
@@ -318,3 +337,17 @@ spec:
             }
           }
 ```
+
+💡 Mirror bitnami images in your MPR.
+
+### Deny latest images tag
+
+TODO:
+
+Do not use mutable (latest) image tags
+
+### 
+
+TODO: ValidatingPolicy
+
+Vérifier que seules des images scannées et exemptes de vulnérabilités sont déployées.
