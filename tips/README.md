@@ -21,3 +21,8 @@ Install and use the kubectl plugin [node-shell](https://github.com/kvaps/kubectl
 kubectl get no
 kubectl node-shell <my-node>
 ```
+
+## Pubic to Private MKS cluster
+
+⚠️ A MKS Public cluster (public only) can't be transformed into a MKS Private cluster.
+Solution: create a MKS private cluster + backup/restore.
